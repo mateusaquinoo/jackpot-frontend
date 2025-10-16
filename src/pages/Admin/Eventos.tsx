@@ -3,6 +3,9 @@ import type { FormEvent } from 'react';
 import axios from 'axios';
 import AdminLayout from '../../components/AdminLayout';
 
+// ---- API base (produção/dev via env) ----
+const API = (import.meta.env.VITE_API_URL as string) || '';
+
 // ---- Day.js (timezone) ----
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -33,9 +36,6 @@ function parseBRLStringToNumber(s: string): number {
   const asNumber = Number(digits) / 100;
   return isNaN(asNumber) ? 0 : asNumber;
 }
-
-// API base
-const API = 'http://localhost:3001';
 
 interface Sede {
   id: number;
@@ -106,7 +106,10 @@ export default function Eventos() {
     setBaixas(b);
 
     // meses únicos combinando retiradas e baixas
-    const mesesSet = new Set<string>([...r.map((x) => toYearMonth(x.data)), ...b.map((x) => toYearMonth(x.data))]);
+    const mesesSet = new Set<string>([
+      ...r.map((x) => toYearMonth(x.data)),
+      ...b.map((x) => toYearMonth(x.data))
+    ]);
     const meses = Array.from(mesesSet).sort((a, b) => a.localeCompare(b));
     setMesesDisponiveis(meses);
 
@@ -285,7 +288,7 @@ export default function Eventos() {
               <th className="p-2">Valor</th>
             </tr>
           </thead>
-        <tbody>
+          <tbody>
             {filtrarRetiradas().map((r, idx) => (
               <tr key={idx} className="border-b border-white/10">
                 <td className="p-2">{fmtDateBR(r.data)}</td>

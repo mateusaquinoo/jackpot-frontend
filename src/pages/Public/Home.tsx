@@ -12,7 +12,8 @@ dayjs.extend(timezone);
 dayjs.locale('pt-br');
 dayjs.tz.setDefault('America/Sao_Paulo');
 
-const API = 'http://localhost:3001';
+// ---- API base (produção/dev via env) ----
+const API = (import.meta.env.VITE_API_URL as string) || '';
 
 interface Jackpot {
   sede: string;

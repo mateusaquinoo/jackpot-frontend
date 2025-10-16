@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminLayout from '../../components/AdminLayout';
 
+const API = (import.meta.env.VITE_API_URL as string) || '';
+
 interface Jackpot {
   sede: string;
   modalidade: string;
@@ -36,21 +38,25 @@ export default function Dashboard() {
   const [filtroMes, setFiltroMes] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3001/jackpot/atual').then((res) => setJackpots(res.data));
+    // Jackpots atuais (por sede e modalidade)
+    axios.get(`${API}/jackpot/atual`).then((res) => setJackpots(res.data)).catch(() => setJackpots([]));
 
-    axios.get('http://localhost:3001/entradas').then((res) => {
-      const todas = res.data;
+    // Entradas (para totais por sede e filtro por mês)
+    axios.get(`${API}/entradas`).then((res) => {
+      const todas: Entrada[] = res.data;
       setEntradas(todas);
 
       const meses: string[] = Array.from(
-        new Set<string>(
-          todas.map((e: Entrada) => e.data.slice(0, 7))
-        )
+        new Set<string>(todas.map((e) => e.data.slice(0, 7)))
       );
       setMesesDisponiveis(meses);
+    }).catch(() => {
+      setEntradas([]);
+      setMesesDisponiveis([]);
     });
 
-    axios.get('http://localhost:3001/saidas/ultimas').then((res) => setUltimos(res.data));
+    // Últimos prêmios
+    axios.get(`${API}/saidas/ultimas`).then((res) => setUltimos(res.data)).catch(() => setUltimos([]));
   }, []);
 
   const entradasFiltradas = entradas.filter((e) => {

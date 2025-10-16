@@ -3,6 +3,9 @@ import type { FormEvent } from 'react';
 import axios from 'axios';
 import AdminLayout from '../../components/AdminLayout';
 
+// ---- API base (produção/dev via env) ----
+const API = (import.meta.env.VITE_API_URL as string) || '';
+
 // ---- Day.js (timezone) ----
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -35,9 +38,6 @@ function formatNumberToBR(noSymbol: number): string {
 function formatCurrencyBR(n: number): string {
   return currencyBR.format(n).replace(/\u00A0/g, ' ');
 }
-
-// API base (ajuste a porta se necessário)
-const API = 'http://localhost:3001';
 
 interface Sede {
   id: number;
